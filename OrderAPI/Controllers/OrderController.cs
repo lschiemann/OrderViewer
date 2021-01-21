@@ -29,10 +29,12 @@ namespace OrderAPI.Controllers
         return orders;
       }
 
+      //always simulate new incomings of orders
       var lastId = _context.Orders.Select(o => o.Id).Max();
       var data = DataGenerator.Create(lastId);
       _context.OrderFiles.AddRange(data.Files);
       _context.Orders.AddRange(data.Orders);
+
       _context.SaveChanges();
 
       return data.Orders.Where(o => !o.IsTransfered);

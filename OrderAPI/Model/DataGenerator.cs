@@ -10,7 +10,7 @@ namespace OrderAPI.Model
     {
       amount = amount.HasValue ? amount : new Random().Next(0, 50);
 
-      List <OrderFile> files = new List<OrderFile>();
+      List<OrderFile> files = new List<OrderFile>();
 
       List<Order> orders = new List<Order>();
       for (var i = 0; i < amount; i++)
@@ -25,7 +25,7 @@ namespace OrderAPI.Model
           OrderNumber = startId + i + 1,
           OrderDate = Identification.DateOfBirth(),
           IsShipped = isShipped,
-          IsTransfered = Faker.Boolean.Random(),
+          IsTransfered = false,
           FileIdOrderSheet = CreateNewFile(files),
           FileIdDeliveryNote = isShipped ? CreateNewFile(files) : null
         });

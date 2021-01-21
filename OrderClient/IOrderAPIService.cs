@@ -8,7 +8,7 @@ namespace OrderClient
 {
   public interface IOrderAPIService
   {
-    Task<IEnumerable<Order>> GetOpenOrders();
+    Task<IEnumerable<Order>> GetOpenOrders(DateTime receiveDate);
     Task<bool> DeliverOrder(int orderId);
     Task<bool> TransferOrder(int orderId);
     Task<Stream> GetFile(Guid id);

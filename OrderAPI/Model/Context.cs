@@ -12,14 +12,12 @@ namespace OrderAPI.Model
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-      var data = DataGenerator.Create(0, 100);
+      var data = DataGenerator.Create(0, 500);
       modelBuilder.Entity<Order>().HasData(data.Orders);
       modelBuilder.Entity<OrderFile>().HasData(data.Files);
 
       base.OnModelCreating(modelBuilder);
-    }
-
-    
+    }    
 
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderFile> OrderFiles { get; set; }

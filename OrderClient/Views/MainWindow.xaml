@@ -15,7 +15,7 @@
   <Window.Resources>
     <c:InverseBooleanConverter x:Key="InverseBooleanConverter" />
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-
+    <c:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
     <!--#region loading spinner-->
     <Color x:Key="FilledColor" A="255" B="155" R="155" G="155"/>
     <Color x:Key="UnfilledColor" A="0" B="155" R="155" G="155"/>
@@ -267,6 +267,7 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
 
     <StackPanel 
@@ -280,7 +281,7 @@
           Fill="#FF000000" 
           Data="F1 M 38,20.5833C 42.9908,20.5833 47.4912,22.6825 50.6667,26.046L 50.6667,17.4167L 55.4166,22.1667L 55.4167,34.8333L 42.75,34.8333L 38,30.0833L 46.8512,30.0833C 44.6768,27.6539 41.517,26.125 38,26.125C 31.9785,26.125 27.0037,30.6068 26.2296,36.4167L 20.6543,36.4167C 21.4543,27.5397 28.9148,20.5833 38,20.5833 Z M 38,49.875C 44.0215,49.875 48.9963,45.3932 49.7703,39.5833L 55.3457,39.5833C 54.5457,48.4603 47.0852,55.4167 38,55.4167C 33.0092,55.4167 28.5088,53.3175 25.3333,49.954L 25.3333,58.5833L 20.5833,53.8333L 20.5833,41.1667L 33.25,41.1667L 38,45.9167L 29.1487,45.9167C 31.3231,48.3461 34.483,49.875 38,49.875 Z "/>
       </Button>
-      <Label Content="Filter" Padding="0" Margin="15 0 2 0"/>
+      <Label Content="Filter" Padding="0" Margin="15 0 2 0" VerticalAlignment="Center"/>
       <TextBox Text="{Binding FilterString, UpdateSourceTrigger=PropertyChanged}" Width="100"/>
       <Button Command="{Binding ClearFilterCommand}" Content="X" FontWeight="Bold"/>
     </StackPanel>
@@ -313,18 +314,28 @@
           <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Name}" c:GridViewSort.PropertyName="Name"/>
           <GridViewColumn Header="Address" DisplayMemberBinding="{Binding Path=Address}" c:GridViewSort.PropertyName="Address"/>
 
-          <GridViewColumn Header="Ship" c:GridViewSort.PropertyName="IsShipped">
+          <GridViewColumn Header="Completed" c:GridViewSort.PropertyName="IsShipped">
             <GridViewColumn.CellTemplate>
               <DataTemplate>
-                <Button
-                  Content="Ship" 
-                  Command="{Binding DataContext.DeliverOrderCommand, RelativeSource={RelativeSource AncestorType=ListView}}" 
-                  CommandParameter="{Binding}"
-                  IsEnabled="{Binding IsShipped, Converter={StaticResource InverseBooleanConverter}}"/>
+                <StackPanel>
+                  <Button
+                    Content="Complete"
+                    Command="{Binding DataContext.DeliverOrderCommand, RelativeSource={RelativeSource AncestorType=ListView}}" 
+                    CommandParameter="{Binding}"
+                    Visibility="{Binding IsShipped, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+                  <Label Visibility="{Binding IsShipped, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Path                      
+                      SnapsToDevicePixels="False" 
+                      Stroke="Black" 
+                      Fill="Black"
+                      StrokeThickness="1"
+                      Data="M 12.4227,0.00012207C 12.4867,0.126587 12.5333,0.274536 12.6787,0.321411C 9.49199,3.24792 6.704,6.57336 4.69865,10.6827C 4.04399,11.08 3.47066,11.5573 2.83199,11.9706C 2.09467,10.2198 1.692,8.13196 3.8147e-006,7.33606C 0.500004,6.79871 1.31733,6.05994 1.93067,6.2428C 2.85999,6.51868 3.14,7.9054 3.60399,8.81604C 5.80133,5.5387 8.53734,2.19202 12.4227,0.00012207 Z " />
+                  </Label>
+                </StackPanel>
               </DataTemplate>
             </GridViewColumn.CellTemplate>
           </GridViewColumn>
-          
+
           <GridViewColumn Header="Order sheet">
             <GridViewColumn.CellTemplate>
               <DataTemplate>
@@ -358,11 +369,39 @@
       Width="5" 
       HorizontalAlignment="Stretch" />
 
+    <!--#region pdf viewer -->
     <WebBrowser 
       c:WebBrowserUtility.BindableSource="{Binding Document}"
       Visibility="{Binding HasDocument, Converter={StaticResource BooleanToVisibilityConverter}}"
       Grid.Row="1"
       Grid.Column="2"/>
+    <!--#endregion-->
+
+    <Grid
+      Grid.Column="0"     
+      Grid.Row="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+
+      <StackPanel
+        Grid.Column="0"
+        Orientation="Horizontal">
+        <Button Command="{Binding FirstPageCommand}" Content="&lt;&lt;"/>
+        <Button Command="{Binding PreviousPageCommand}" Content="&lt;"/>
+        <Label Content="{Binding CurrentPageLabel}" Padding="0" Margin="5 0 5 0" VerticalAlignment="Center"/>
+        <Button Command="{Binding NextPageCommand}" Content=">"/>
+        <Button Command="{Binding LastPageCommand}" Content=">>"/>
+      </StackPanel>
+      <StackPanel
+        Grid.Column="1"
+        Orientation="Horizontal"
+        FlowDirection="RightToLeft">
+        <ComboBox ItemsSource="{Binding AvailablePageSizes}" SelectedItem="{Binding PageSize}"/>
+        <Label Content="Page size" Padding="0" Margin="5 0 0 0" VerticalAlignment="Center"/>
+      </StackPanel>
+    </Grid>
 
     <!--#region loading screen -->
     <Control Style="{StaticResource BusyAnimationStyle}"

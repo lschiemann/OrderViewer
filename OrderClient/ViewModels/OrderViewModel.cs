@@ -6,81 +6,77 @@ namespace OrderClient.ViewModels
 {
   public class OrderViewModel : BindableBase
   {
-    public OrderViewModel(Order order, bool isNew = false)
+    private readonly Order _order;
+    private readonly DateTime _actualDate;
+    public OrderViewModel(Order order, DateTime actualDate)
     {
-      IsNew = isNew;
-      Model = order;
+      _actualDate = actualDate;
+      _order = order;
     }
-    public Order Model { get; private set; }
-
+    
     public int Id
     {
-      get => Model.Id;
+      get => _order.Id;
     }
 
     public string Name
     {
-      get => Model.Name;      
+      get => _order.Name;      
     }
 
     public string Address
     {
-      get => Model.Address;
+      get => _order.Address;
     }
 
     public int OrderNumber
     {
-      get => Model.OrderNumber;
+      get => _order.OrderNumber;
     }
 
     public bool IsShipped
     {
-      get => Model.IsShipped;
+      get => _order.IsShipped;
       set
       {
-        Model.IsShipped = value;
+        _order.IsShipped = value;
         RaisePropertyChanged();
       }
     }
 
     public bool IsTransfered
     {
-      get => Model.IsTransfered;
+      get => _order.IsTransfered;
       set
       {
-        Model.IsTransfered = value;
+        _order.IsTransfered = value;
         RaisePropertyChanged();
       }
     }
 
-    private bool _isNew;
     public bool IsNew
     {
-      get => _isNew;
-      set
-      {
-        SetProperty(ref _isNew, value);
-      }
+      get => _order.ReceivedDate == _actualDate;
     }
 
     public DateTime OrderDate
     {
-      get => Model.OrderDate;
+      get => _order.OrderDate;
     }
 
     public Guid FileIdOrderSheet
     {
-      get => Model.FileIdOrderSheet;
+      get => _order.FileIdOrderSheet;
     }
 
     public Guid? FileIdDeliveryNote
     {
-      get => Model.FileIdDeliveryNote;
+      get => _order.FileIdDeliveryNote;
     }
 
     public bool HasDeliveryNote
     {
-      get => Model.FileIdDeliveryNote.HasValue;
+      get => _order.FileIdDeliveryNote.HasValue;
     }
   }
 }

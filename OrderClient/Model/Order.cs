@@ -15,5 +15,6 @@ namespace OrderClient.Model
     public DateTime OrderDate { get; set; }
     public Guid FileIdOrderSheet { get; set; }
     public Guid? FileIdDeliveryNote { get; set; }
+    public DateTime ReceivedDate { get; set; }
   }
 }

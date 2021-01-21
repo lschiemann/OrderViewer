@@ -20,8 +20,6 @@ namespace OrderClient
       {
         client.BaseAddress = new Uri(_baseAddress);
 
-        //client.Timeout = TimeSpan.FromSeconds(Convert.ToDouble(1000000));
-
         var response = await client.PostAsync("order/ship", new StringContent(orderId.ToString(), System.Text.Encoding.UTF8, "application/json")).ConfigureAwait(false);
 
         return response.IsSuccessStatusCode;
@@ -34,15 +32,13 @@ namespace OrderClient
       {
         client.BaseAddress = new Uri(_baseAddress);
 
-        //client.Timeout = TimeSpan.FromSeconds(Convert.ToDouble(1000000));
-
         var response = await client.PostAsync("order/transfer", new StringContent(orderId.ToString(), System.Text.Encoding.UTF8, "application/json")).ConfigureAwait(false);
 
         return response.IsSuccessStatusCode;
       }
     }
 
-    public async Task<IEnumerable<Order>> GetOpenOrders()
+    public async Task<IEnumerable<Order>> GetOpenOrders(DateTime receiveDate)
     {
       using (var client = new HttpClient())
       {
@@ -73,7 +69,8 @@ namespace OrderClient
               Id = int.Parse(e.Element("Id").Value),
               IsTransfered = bool.Parse(e.Element("IsTransfered").Value),
               FileIdOrderSheet = Guid.Parse(e.Element("FileIdOrderSheet").Value),
-              FileIdDeliveryNote = hasDeliveryNote ? fileIdDeliveryNote: null
+              FileIdDeliveryNote = hasDeliveryNote ? fileIdDeliveryNote: null,
+              ReceivedDate = receiveDate
             };
           }).ToArray();
           return orders;
@@ -99,11 +96,10 @@ namespace OrderClient
         
         var result = response.Content.ReadAsStreamAsync().Result;
         var suceeded = response.IsSuccessStatusCode;
-        
+
         //todo: this gets the original file name from header --> perhaps needed?
-        IEnumerable<string> values;
-        response.Content.Headers.TryGetValues("Content-Disposition", out values);
-        
+        //response.Content.Headers.TryGetValues("Content-Disposition", out IEnumerable<string> values);
+
         if (suceeded)
         {
           return result;
