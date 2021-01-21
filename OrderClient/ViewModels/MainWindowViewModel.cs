@@ -205,6 +205,7 @@ namespace OrderClient.ViewModels
     private async void DeliverOrder(OrderViewModel order)
     {
       order.IsShipped = await _orderAPIService.DeliverOrder(order.Id);
+      _context.SaveChanges();
     }
 
     private async void OpenDeliveryNote(OrderViewModel order)
